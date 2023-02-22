@@ -47,7 +47,8 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Stick To Ground Parameters")]
     [Tooltip("taille minimum du perso au dessus du sol")]
-    [SerializeField] private float gANCSize; [Tooltip("empty")]
+    [SerializeField] private float gANCSize; 
+    [Tooltip("empty")]
     [SerializeField] private RaycastHit2D groundAlignementNC;
 
 
@@ -63,6 +64,7 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("La Trail pendant le Dash")]
     [SerializeField] private TrailRenderer trail;
     private Vector2 dashDir;
+    private bool couldDash = true;
 
     /*[Header("Planer Parameters")]
     [Tooltip("PAS TOUCHE !!!")]
@@ -224,7 +226,7 @@ public class PlayerMovement : MonoBehaviour
             Moveperso(movehorizontal);
             GravityPhysics(baseOriginGravityScale);
             Jump(jumpForce);
-            if (canScreenShake && screenShakeRay.distance < minDistanceForScreenShake)
+            if (canScreenShake && screenShakeRay.distance < minDistanceForScreenShake && rb.velocity.y <= -20f)
             {
                 isJumping = false;
                 canScreenShake = false;
@@ -237,7 +239,7 @@ public class PlayerMovement : MonoBehaviour
             Moveperso(movehorizontalHardened);
             GravityPhysics(hardenedOriginGravityScale);
             Jump(hardJumpForce);
-            if (canScreenShake && screenShakeRay.distance < minDistanceForScreenShake)
+            if (canScreenShake && screenShakeRay.distance < minDistanceForScreenShake && rb.velocity.y <= -20f)
             {
                 isJumping = false;
                 canScreenShake = false;
@@ -246,6 +248,11 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //Appel du Dash ou action de sorti de mode durci
+        if (couldDash && isGrounded)
+        {
+            canDash = true;
+        }
+
         if (Input.GetKeyDown(dashKey) && canDash)
         {
             DashV3();
@@ -348,6 +355,7 @@ public class PlayerMovement : MonoBehaviour
     void DashV3()
     {
         isDashing = true;
+        couldDash = false;
         canDash = false;
         trail.emitting = true;
         dashDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
@@ -370,7 +378,7 @@ public class PlayerMovement : MonoBehaviour
         trail.emitting = false;
         isDashing = false;
         yield return new WaitForSeconds(dashCooldown);
-        canDash = true;
+        couldDash = true;
     }
 
     void Flip()

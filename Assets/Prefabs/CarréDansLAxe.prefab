@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 1921062669476280001}
   - component: {fileID: 1921062669476280060}
   - component: {fileID: 700038712153820397}
+  - component: {fileID: 7550337280745283858}
   m_Layer: 0
   m_Name: "Carr\xE9DansLAxe"
   m_TagString: Untagged
@@ -300,7 +301,7 @@ MonoBehaviour:
   jumpForce: 15
   SDOffset: 0.05
   coyoteTime: 0.1
-  jumpBufferTime: 0.05
+  jumpBufferTime: 0.08
   baseOriginGravityScale: 2
   hardenedOriginGravityScale: 3.5
   gravityScaleIncrease: 12.5
@@ -347,7 +348,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  minDistanceForScreenShake: 2
+  minDistanceForScreenShake: 1
   screenShakeRaySize: 3
   screenShakeRayDirection: {x: 0, y: -1}
   rb: {fileID: 1921062669476280061}
@@ -369,6 +370,36 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 8
+--- !u!114 &7550337280745283858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1921062669476280059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 38a9b618c5ff23747973a85dcc076472, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &1921062669660036388
 GameObject:
   m_ObjectHideFlags: 0
