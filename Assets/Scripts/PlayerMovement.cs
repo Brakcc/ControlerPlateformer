@@ -1,10 +1,12 @@
 using System.Collections;
 using System.ComponentModel;
 using System.Xml.Linq;
+using TMPro.SpriteAssetUtilities;
 using TreeEditor;
 using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -38,6 +40,7 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("Permet de sauter légèrement avant d'avoir touché le sol")]
     [SerializeField] private float jumpBufferTime;
     private float jumpBufferTimeCounter;
+    private bool canJump = false;
 
     [Header("Gravity Parameters")]
     [Tooltip("écehlle de gravité de base du perso, quand il est au sol, elle augmente lorqu'il a sauté, hésitez pas à faire des tests avec et la modif au max")]
@@ -234,8 +237,8 @@ public class PlayerMovement : MonoBehaviour
         if (!isHardened)
         {
             Moveperso(movehorizontal);
+            Jump(jumpForce);
             GravityPhysics(baseOriginGravityScale);
-            //Jump(jumpForce);
             if (canScreenShake && screenShakeRay.distance < minDistanceForScreenShake && rb.velocity.y <= -20f)
             {
                 isJumping = false;
@@ -248,7 +251,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Moveperso(movehorizontalHardened);
             GravityPhysics(hardenedOriginGravityScale);
-            //Jump(hardJumpForce);
+            Jump(hardJumpForce);
             if (canScreenShake && screenShakeRay.distance < minDistanceForScreenShake && rb.velocity.y <= -20f)
             {
                 isJumping = false;
@@ -284,10 +287,11 @@ public class PlayerMovement : MonoBehaviour
         Flip();
     }
 
+    #region New Input System
     void OnEnable()
     {
-        jump.action.performed += PerformJump;
-        jump.action.canceled += PerformJump;
+        jump.action.performed += ctx => canJump = true;
+        jump.action.canceled += ctx => canJump = false;
 
         action.action.performed += PerformAction;
         action.action.canceled -= PerformAction;
@@ -298,24 +302,14 @@ public class PlayerMovement : MonoBehaviour
         DashV3();
     }
 
-    private void PerformJump(InputAction.CallbackContext obj)
-    {
-        if (isHardened)
-        {
-            Jump(hardJumpForce);
-        }
-        else
-        {
-            Jump(jumpForce);
-        }
-    }
-
     void OnDisable()
     {
-        jump.action.performed -= PerformJump;
+        jump.action.started -= ctx => canJump = true;
+        jump.action.canceled -= ctx => canJump = false;
 
         action.action.performed -= PerformAction;
     }
+    #endregion
 
     #region Méthodes
     void Moveperso(float _horiz)
@@ -336,7 +330,7 @@ public class PlayerMovement : MonoBehaviour
             coyoteTimeCounter -= Time.deltaTime;
         }
 
-        if (Input.GetButtonDown("Jump"))
+        if (canJump)
         {
             jumpBufferTimeCounter = jumpBufferTime;
         }
@@ -353,7 +347,7 @@ public class PlayerMovement : MonoBehaviour
             jumpBufferTimeCounter = 0f;
         }
 
-        if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
+        if (!canJump && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
             coyoteTimeCounter = 0f;
