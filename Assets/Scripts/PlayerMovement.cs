@@ -10,14 +10,12 @@ public class PlayerMovement : MonoBehaviour
 {
     #region Initialisations 
     [Header("Input list")]
-    [Tooltip("Touche du bas du controler")]
-    [SerializeField] private KeyCode downKey = KeyCode.S;
-    [Tooltip("Topuche du haut du controleur")]
-    [SerializeField] private KeyCode upKey = KeyCode.Z;
-    [Tooltip("Touche du Dash/autre action")]
-    [SerializeField] private KeyCode dashKey = KeyCode.CapsLock;
-    [Tooltip("liste des commandes sur nouvel Input System")]
-    [SerializeField] private InputActionReference move, jump, action;
+    [Tooltip("mouvements sur nouvel Input System")]
+    [SerializeField] private InputActionReference move;
+    [Tooltip("jump sur nouvel Input System")]
+    [SerializeField] private InputActionReference jump;
+    [Tooltip("Dash/action sur nouvel Input System")]
+    [SerializeField] private InputActionReference action;
     private float moveX;
     private float moveY;
 
