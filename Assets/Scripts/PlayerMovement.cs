@@ -4,9 +4,11 @@ using System.Xml.Linq;
 using TreeEditor;
 using UnityEditor.Search;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+    #region Initialisations 
     [Header("Input list")]
     [Tooltip("Touche du bas du controler")]
     [SerializeField] private KeyCode downKey = KeyCode.S;
@@ -14,6 +16,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private KeyCode upKey = KeyCode.Z;
     [Tooltip("Touche du Dash/autre action")]
     [SerializeField] private KeyCode dashKey = KeyCode.CapsLock;
+    [Tooltip("liste des commandes sur nouvel Input System")]
+    [SerializeField] private InputActionReference move, jump, action;
+    private float moveX;
+    private float moveY;
 
     [Header("Movement Parameters")]
     [Tooltip("Abusez pas vous comprenez qand même ce qu'est une vitesse de déplacement")]
@@ -120,9 +126,9 @@ public class PlayerMovement : MonoBehaviour
     [Header("Hardened mode Parameters")]
     [Tooltip("vérification du mode durci")]
     [SerializeField] private bool isHardened = false;
-    [Tooltip("durée maxiamle du mode durci")]
+    /*[Tooltip("durée maxiamle du mode durci")]
     [SerializeField] private float hardenedDuration;
-    private float hardenedDCounter;
+    private float hardenedDCounter;*/
     [Tooltip("vitesse de déplacement en mode durci")]
     [SerializeField] private float hardMoveSpeed;
     private float movehorizontalHardened;
@@ -155,6 +161,7 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("sprite renderer utilisé pour le sens de déplacement du personnage")]
     public SpriteRenderer spriteRenderer;
     private bool isFacingRight = true;
+    #endregion
 
     public static PlayerMovement instance;
 
@@ -189,8 +196,13 @@ public class PlayerMovement : MonoBehaviour
         //wallJumpRight = Physics2D.Raycast(transform.position, new Vector2(1, 0), 2, WallCollisionLayer);
 
         //Valeur des vitesses 
-        movehorizontal = Input.GetAxisRaw("Horizontal") * moveSpeed * Time.fixedDeltaTime;
-        movehorizontalHardened = Input.GetAxisRaw("Horizontal") * hardMoveSpeed * Time.fixedDeltaTime;
+        moveX = move.action.ReadValue<Vector2>().x;
+        moveY = move.action.ReadValue<Vector2>().y;
+
+
+
+        movehorizontal = moveX * moveSpeed * Time.fixedDeltaTime;
+        movehorizontalHardened = moveX * hardMoveSpeed * Time.fixedDeltaTime;
 
         //vérification de la vitesse max de chute du perso
         if (rb.velocity.y >= maxVerticalSpeed)
@@ -199,7 +211,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //Changement de mode du perso
-        if (Input.GetKey(downKey) && Input.GetButtonDown("Jump"))
+        /*if (Input.GetKey(downKey) && Input.GetButtonDown("Jump"))
         {
             hardenedDCounter = hardenedDuration;
         }
@@ -212,7 +224,7 @@ public class PlayerMovement : MonoBehaviour
         {
             isHardened = false;
             hardenedDCounter = -0.1f;
-        }
+        }*/
 
         //verif du screen shake avec condition de dépassement
         if (screenShakeRay.distance >= minDistanceForScreenShake + 0.2f)
@@ -225,7 +237,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Moveperso(movehorizontal);
             GravityPhysics(baseOriginGravityScale);
-            Jump(jumpForce);
+            //Jump(jumpForce);
             if (canScreenShake && screenShakeRay.distance < minDistanceForScreenShake && rb.velocity.y <= -20f)
             {
                 isJumping = false;
@@ -238,7 +250,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Moveperso(movehorizontalHardened);
             GravityPhysics(hardenedOriginGravityScale);
-            Jump(hardJumpForce);
+            //Jump(hardJumpForce);
             if (canScreenShake && screenShakeRay.distance < minDistanceForScreenShake && rb.velocity.y <= -20f)
             {
                 isJumping = false;
@@ -253,10 +265,6 @@ public class PlayerMovement : MonoBehaviour
             canDash = true;
         }
 
-        if (Input.GetKeyDown(dashKey) && canDash)
-        {
-            DashV3();
-        }
 
         //petites couleurs sympas
         if (!isHardened && isDashing)
@@ -278,6 +286,40 @@ public class PlayerMovement : MonoBehaviour
         Flip();
     }
 
+    void OnEnable()
+    {
+        jump.action.performed += PerformJump;
+        jump.action.canceled += PerformJump;
+
+        action.action.performed += PerformAction;
+        action.action.canceled -= PerformAction;
+    }
+
+    private void PerformAction(InputAction.CallbackContext obj)
+    {
+        DashV3();
+    }
+
+    private void PerformJump(InputAction.CallbackContext obj)
+    {
+        if (isHardened)
+        {
+            Jump(hardJumpForce);
+        }
+        else
+        {
+            Jump(jumpForce);
+        }
+    }
+
+    void OnDisable()
+    {
+        jump.action.performed -= PerformJump;
+
+        action.action.performed -= PerformAction;
+    }
+
+    #region Méthodes
     void Moveperso(float _horiz)
     {
         Vector3 baseMoveVelocity = new Vector2(_horiz, rb.velocity.y);
@@ -354,21 +396,24 @@ public class PlayerMovement : MonoBehaviour
 
     void DashV3()
     {
-        isDashing = true;
-        couldDash = false;
-        canDash = false;
-        trail.emitting = true;
-        dashDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        if (dashDir == Vector2.zero)
+        if (canDash)
         {
-            dashDir = new Vector2(transform.localScale.x, 0f);
-        }
-        StartCoroutine(StopDashV3());
+            isDashing = true;
+            couldDash = false;
+            canDash = false;
+            trail.emitting = true;
+            dashDir = new Vector2(moveX, moveY);
+            if (dashDir == Vector2.zero)
+            {
+                dashDir = new Vector2(transform.localScale.x, 0f);
+            }
+            StartCoroutine(StopDashV3());
 
-        if (isDashing)
-        {
-            rb.velocity = dashPower * dashDir.normalized;
-            return;
+            if (isDashing)
+            {
+                rb.velocity = dashPower * dashDir.normalized;
+                return;
+            }
         }
     }
 
@@ -429,7 +474,9 @@ public class PlayerMovement : MonoBehaviour
         Gizmos.color = Color.green;
         Gizmos.DrawLine(transform.position, groundAlignementNC.point);
     }
+    #endregion
 
+    #region Old fonction
     /*void DashV1()
     {
         Vector2 dashDir = new Vector2(dashPower * Mathf.Sign(rb.velocity.x), dashPowerCompensation);
@@ -598,4 +645,5 @@ public class PlayerMovement : MonoBehaviour
     {
         isWallJump = false;
     }*/
+    #endregion
 }
