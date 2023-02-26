@@ -296,18 +296,18 @@ MonoBehaviour:
   move: {fileID: 3284202215928774880, guid: 38a9b618c5ff23747973a85dcc076472, type: 3}
   jump: {fileID: 2967327302281113686, guid: 38a9b618c5ff23747973a85dcc076472, type: 3}
   action: {fileID: -6565511526773613967, guid: 38a9b618c5ff23747973a85dcc076472, type: 3}
-  moveSpeed: 400
+  moveSpeed: 550
   maxVerticalSpeed: 28
   jumpForce: 15
   SDOffset: 0.05
-  coyoteTime: 0.1
-  jumpBufferTime: 0.08
-  baseOriginGravityScale: 2
-  hardenedOriginGravityScale: 3.5
-  gravityScaleIncrease: 12.5
+  coyoteTime: 0.15
+  baseOriginGravityScale: 5
+  hardenedOriginGravityScale: 6.5
+  gravityScaleIncrease: 16
   gravityLimit: 8
   gANCSize: 0
   dashPower: 35
+  dashCompensation: {x: 2, y: 0.5}
   dashTime: 0.2
   dashCooldown: 2
   trail: {fileID: 1921062669476280001}
@@ -317,8 +317,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   isHardened: 0
-  hardMoveSpeed: 650
-  hardJumpForce: 11.5
+  hardMoveSpeed: 400
+  hardJumpForce: 20
   cameraTransHardened: {fileID: 0}
   notMovingCamScale: {x: 1, y: 1, z: 1}
   sprintCamScale: {x: 1.2, y: 1.2, z: 1.2}

@@ -1337,26 +1337,6 @@ PrefabInstance:
       value: "Carr\xE9DansLAxe"
       objectReference: {fileID: 0}
     - target: {fileID: 1921062669476280060, guid: d6cb7c40e3b768a418cd493479a1efa3, type: 3}
-      propertyPath: jumpForce
-      value: 26
-      objectReference: {fileID: 0}
-    - target: {fileID: 1921062669476280060, guid: d6cb7c40e3b768a418cd493479a1efa3, type: 3}
-      propertyPath: moveSpeed
-      value: 550
-      objectReference: {fileID: 0}
-    - target: {fileID: 1921062669476280060, guid: d6cb7c40e3b768a418cd493479a1efa3, type: 3}
-      propertyPath: coyoteTime
-      value: 0.15
-      objectReference: {fileID: 0}
-    - target: {fileID: 1921062669476280060, guid: d6cb7c40e3b768a418cd493479a1efa3, type: 3}
-      propertyPath: hardJumpForce
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 1921062669476280060, guid: d6cb7c40e3b768a418cd493479a1efa3, type: 3}
-      propertyPath: hardMoveSpeed
-      value: 400
-      objectReference: {fileID: 0}
-    - target: {fileID: 1921062669476280060, guid: d6cb7c40e3b768a418cd493479a1efa3, type: 3}
       propertyPath: hardenedDuration
       value: 10000
       objectReference: {fileID: 0}
@@ -1367,18 +1347,6 @@ PrefabInstance:
     - target: {fileID: 1921062669476280060, guid: d6cb7c40e3b768a418cd493479a1efa3, type: 3}
       propertyPath: gravityCompensation
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1921062669476280060, guid: d6cb7c40e3b768a418cd493479a1efa3, type: 3}
-      propertyPath: gravityScaleIncrease
-      value: 16
-      objectReference: {fileID: 0}
-    - target: {fileID: 1921062669476280060, guid: d6cb7c40e3b768a418cd493479a1efa3, type: 3}
-      propertyPath: baseOriginGravityScale
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1921062669476280060, guid: d6cb7c40e3b768a418cd493479a1efa3, type: 3}
-      propertyPath: hardenedOriginGravityScale
-      value: 6.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []

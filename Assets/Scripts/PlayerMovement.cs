@@ -37,9 +37,9 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("Leger délai pour sauter après une chutte d'une plateforme")]
     [SerializeField] private float coyoteTime;
     private float coyoteTimeCounter;
-    [Tooltip("Permet de sauter légèrement avant d'avoir touché le sol")]
+    /*[Tooltip("Permet de sauter légèrement avant d'avoir touché le sol")]
     [SerializeField] private float jumpBufferTime;
-    private float jumpBufferTimeCounter;
+    private float jumpBufferTimeCounter;*/
     private bool canJump = false;
 
     [Header("Gravity Parameters")]
@@ -62,6 +62,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("Dash Parameters")]
     [Tooltip("Puissance du Dash")]
     [SerializeField] private float dashPower;
+    [Tooltip("règle la puissance horizontale différée de la puissance verticale du Dash, évitre de tomber comme un caillou directement après avoir fait un Dash horizontal")]
+    [SerializeField] private Vector2 dashCompensation;
     [Tooltip("Durée du Dash, il vaut mieux la laisser faible, sinon le perso ne déscent plus pendant un moment")]
     [SerializeField] private float dashTime;
     [Tooltip("Le cooldown du Dash")]
@@ -330,28 +332,28 @@ public class PlayerMovement : MonoBehaviour
             coyoteTimeCounter -= Time.deltaTime;
         }
 
-        if (canJump)
+        /*if (canJump)
         {
             jumpBufferTimeCounter = jumpBufferTime;
-        }
+        }*/
 
-        else
+        /*else
         {
             jumpBufferTimeCounter -= Time.deltaTime;
-        }
+        }*/
 
-        if (coyoteTimeCounter > 0f && jumpBufferTimeCounter > 0f)
+        if (coyoteTimeCounter > 0f && canJump)
         {
             isJumping = true;
             rb.velocity = new Vector2(rb.velocity.x, _jumpForce);
-            jumpBufferTimeCounter = 0f;
+            //jumpBufferTimeCounter = 0f;
         }
 
-        if (!canJump && rb.velocity.y > 0f)
+        /*if (!canJump && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
             coyoteTimeCounter = 0f;
-        }
+        }*/
     }
 
     void GravityPhysics(float originGS)
@@ -403,7 +405,8 @@ public class PlayerMovement : MonoBehaviour
 
             if (isDashing)
             {
-                rb.velocity = dashPower * dashDir.normalized;
+                rb.velocity = dashPower * dashDir.normalized * dashCompensation;
+                rb.gravityScale = 0f;
                 return;
             }
         }
@@ -414,6 +417,7 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(dashTime);
         trail.emitting = false;
         isDashing = false;
+        rb.gravityScale = baseOriginGravityScale;
         yield return new WaitForSeconds(dashCooldown);
         couldDash = true;
     }
