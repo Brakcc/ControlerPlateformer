@@ -26,21 +26,22 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed;
     [Tooltip("vitesse max de chute du perso pour éviter une accélération infinie et le passage à travres les hitbox")]
     [SerializeField] private float maxVerticalSpeed;
-    [Tooltip("pariel sur la puissance du saut, la puissance du saut est plus basse que la vitesse de déplacement car elle utilise une échelle différente du SmoothDamp)")]
-    public float jumpForce;
     private float movehorizontal;
     private Vector3 velocity = Vector3.zero;
-    private bool isGrounded;
-    private bool isJumping = false;
     [Tooltip("Règle l'accélération du SmoothDamp (n'y touchez pas trop c'est chiant à régler :')")]
     [SerializeField] private float SDOffset;
+
+    [Header("Jump Parameters")]
+    [Tooltip("pariel sur la puissance du saut, la puissance du saut est plus basse que la vitesse de déplacement car elle utilise une échelle différente du SmoothDamp)")]
+    public float jumpForce;
+    private bool isGrounded;
+    private bool isJumping = false;
     [Tooltip("Leger délai pour sauter après une chutte d'une plateforme")]
     [SerializeField] private float coyoteTime;
     private float coyoteTimeCounter;
-    /*[Tooltip("Permet de sauter légèrement avant d'avoir touché le sol")]
+    [Tooltip("Permet de sauter légèrement avant d'avoir touché le sol")]
     [SerializeField] private float jumpBufferTime;
-    private float jumpBufferTimeCounter;*/
-    private bool canJump = false;
+    private float jumpBufferTimeCounter;
 
     [Header("Gravity Parameters")]
     [Tooltip("écehlle de gravité de base du perso, quand il est au sol, elle augmente lorqu'il a sauté, hésitez pas à faire des tests avec et la modif au max")]
@@ -128,7 +129,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Hardened mode Parameters")]
     [Tooltip("vérification du mode durci")]
-    [SerializeField] private bool isHardened = false;
+    public bool isHardened = false;
     /*[Tooltip("durée maxiamle du mode durci")]
     [SerializeField] private float hardenedDuration;
     private float hardenedDCounter;*/
@@ -137,6 +138,8 @@ public class PlayerMovement : MonoBehaviour
     private float movehorizontalHardened;
     [Tooltip("puissance du saut quand le mode durci erst activé")]
     [SerializeField] private float hardJumpForce;
+    [Tooltip("Couleur du perso en mode durci, surtout utile pour les tests avant implémentation des travaux des GAs")]
+    [SerializeField] private Color hardenedColor;
 
     [Header("Hardened Camera Parameters")]
     [Tooltip("transform de la caméra en mode durci pour le screanshake et autre mouvements de caméra")]
@@ -166,6 +169,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isFacingRight = true;
     #endregion
 
+    #region instance
     public static PlayerMovement instance;
 
     private void Awake()
@@ -178,7 +182,9 @@ public class PlayerMovement : MonoBehaviour
 
         instance = this;
     }
+    #endregion
 
+    #region Update
     void Update()
     {
         //Vérifications de collision au solA
@@ -241,11 +247,6 @@ public class PlayerMovement : MonoBehaviour
             Moveperso(movehorizontal);
             Jump(jumpForce);
             GravityPhysics(baseOriginGravityScale);
-            if (canScreenShake && screenShakeRay.distance < minDistanceForScreenShake && rb.velocity.y <= -20f)
-            {
-                isJumping = false;
-                canScreenShake = false;
-            }
         }
 
         //Appel des méthodes de mouvements en mode durci
@@ -256,7 +257,6 @@ public class PlayerMovement : MonoBehaviour
             Jump(hardJumpForce);
             if (canScreenShake && screenShakeRay.distance < minDistanceForScreenShake && rb.velocity.y <= -20f)
             {
-                isJumping = false;
                 canScreenShake = false;
                 StartCoroutine(ScreenShake());
             }
@@ -280,7 +280,7 @@ public class PlayerMovement : MonoBehaviour
         }
         if (isHardened)
         {
-            spriteRenderer.color = Color.red;
+            spriteRenderer.color = hardenedColor;
         }
 
         //StickToGround();
@@ -288,13 +288,11 @@ public class PlayerMovement : MonoBehaviour
         //Flip du sprite en fonction de la direction de déplacement
         Flip();
     }
+    #endregion
 
     #region New Input System
     void OnEnable()
     {
-        jump.action.performed += ctx => canJump = true;
-        jump.action.canceled += ctx => canJump = false;
-
         action.action.performed += PerformAction;
         action.action.canceled -= PerformAction;
     }
@@ -306,9 +304,6 @@ public class PlayerMovement : MonoBehaviour
 
     void OnDisable()
     {
-        jump.action.started -= ctx => canJump = true;
-        jump.action.canceled -= ctx => canJump = false;
-
         action.action.performed -= PerformAction;
     }
     #endregion
@@ -332,28 +327,28 @@ public class PlayerMovement : MonoBehaviour
             coyoteTimeCounter -= Time.deltaTime;
         }
 
-        /*if (canJump)
+        if (jump.action.WasPerformedThisFrame())
         {
             jumpBufferTimeCounter = jumpBufferTime;
-        }*/
+        }
 
-        /*else
+        else
         {
             jumpBufferTimeCounter -= Time.deltaTime;
-        }*/
+        }
 
-        if (coyoteTimeCounter > 0f && canJump)
+        if (coyoteTimeCounter > 0f && jumpBufferTimeCounter > 0f)
         {
             isJumping = true;
             rb.velocity = new Vector2(rb.velocity.x, _jumpForce);
-            //jumpBufferTimeCounter = 0f;
+            jumpBufferTimeCounter = 0f;
         }
 
-        /*if (!canJump && rb.velocity.y > 0f)
+        if (jump.action.WasReleasedThisFrame() && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
             coyoteTimeCounter = 0f;
-        }*/
+        }
     }
 
     void GravityPhysics(float originGS)

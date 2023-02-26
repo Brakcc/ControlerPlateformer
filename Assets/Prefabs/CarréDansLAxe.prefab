@@ -49,7 +49,7 @@ GameObject:
   - component: {fileID: 4289484722564213430}
   m_Layer: 0
   m_Name: "Carr\xE9DansLAxe"
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -297,17 +297,18 @@ MonoBehaviour:
   jump: {fileID: 2967327302281113686, guid: 38a9b618c5ff23747973a85dcc076472, type: 3}
   action: {fileID: -6565511526773613967, guid: 38a9b618c5ff23747973a85dcc076472, type: 3}
   moveSpeed: 550
-  maxVerticalSpeed: 28
-  jumpForce: 15
+  maxVerticalSpeed: 25
   SDOffset: 0.05
+  jumpForce: 28
   coyoteTime: 0.15
+  jumpBufferTime: 0.1
   baseOriginGravityScale: 5
   hardenedOriginGravityScale: 6.5
   gravityScaleIncrease: 16
   gravityLimit: 8
   gANCSize: 0
   dashPower: 35
-  dashCompensation: {x: 2, y: 0.5}
+  dashCompensation: {x: 2, y: 0.75}
   dashTime: 0.2
   dashCooldown: 2
   trail: {fileID: 1921062669476280001}
@@ -317,8 +318,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   isHardened: 0
-  hardMoveSpeed: 400
+  hardMoveSpeed: 600
   hardJumpForce: 20
+  hardenedColor: {r: 0.509434, g: 0.26970258, b: 0.0744927, a: 1}
   cameraTransHardened: {fileID: 0}
   notMovingCamScale: {x: 1, y: 1, z: 1}
   sprintCamScale: {x: 1.2, y: 1.2, z: 1.2}
@@ -327,19 +329,19 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
-      value: 0.100120544
-      inSlope: -0.10198212
-      outSlope: -0.10198212
+      time: -0.0034866333
+      value: 0.052085876
+      inSlope: -0.059069198
+      outSlope: -0.059069198
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 1
-      value: -0.0018615723
-      inSlope: -0.10198212
-      outSlope: -0.10198212
+      time: 0.8989563
+      value: -0.0012207031
+      inSlope: -0.059069198
+      outSlope: -0.059069198
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
