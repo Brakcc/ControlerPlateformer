@@ -99,7 +99,7 @@ public class PlayerMovement : MonoBehaviour
     private float wallJumpBufferCounter;
     [SerializeField] private float wallJumpDuration;
     private float wallJumpDirection;
-    private bool isWallGrab;
+    [SerializeField] private bool isWallGrab;
     private bool isWallJump;
     private bool isCloseToWall;
     [Tooltip("Zone de détection du mur de droite")]
@@ -616,7 +616,7 @@ public class PlayerMovement : MonoBehaviour
         {
             wallJumpBufferCounter -= Time.deltaTime;
         }
-        if(Input.GetButtonDown("Jump") && wallJumpBufferCounter > 0f)
+        if(jump.action.WasPerformedThisFrame() && wallJumpBufferCounter > 0f)
         {
             isWallJump = true;
             rb.velocity = new Vector2(wallJumpDirection * powerWallJump.x, powerWallJump.y);
@@ -628,7 +628,7 @@ public class PlayerMovement : MonoBehaviour
                 localScale.x *= -1f;
                 transform.localScale = localScale;
             }
-            Invoke(nameof(StopWallJumping), wallJumpDuration);
+            Invoke(nameof(StopWallJumpingV2), wallJumpDuration);
         }
     }*/
 

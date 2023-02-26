@@ -299,7 +299,7 @@ MonoBehaviour:
   moveSpeed: 550
   maxVerticalSpeed: 25
   SDOffset: 0.05
-  jumpForce: 28
+  jumpForce: 25
   coyoteTime: 0.15
   jumpBufferTime: 0.1
   baseOriginGravityScale: 5
