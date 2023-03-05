@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GroundAlignment : MonoBehaviour
 {
+    [Header("Ground Alignement Paramters")]
     [SerializeField] private RaycastHit2D groundCheck;
     [SerializeField] private float raySize;
     [SerializeField] private Vector2 rayNorm;
@@ -17,7 +18,8 @@ public class GroundAlignment : MonoBehaviour
         transform.up = rayNorm;
     }
 
-    private void OnDrawGizmos()
+
+    void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawLine(transform.position, groundCheck.point);

@@ -27,6 +27,7 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("vitesse max de chute du perso pour éviter une accélération infinie et le passage à travres les hitbox")]
     [SerializeField] private float maxVerticalSpeed;
     private float movehorizontal;
+    private float apexMoveHorizontal;
     private Vector3 velocity = Vector3.zero;
     [Tooltip("Règle l'accélération du SmoothDamp (n'y touchez pas trop c'est chiant à régler :')")]
     [SerializeField] private float SDOffset;
@@ -52,13 +53,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float gravityScaleIncrease;
     [Tooltip("La limite max de Gravity Scale, histoire que le perso s'enfonce pas à travers la map en sautant de trop haut")]
     [SerializeField] private float gravityLimit;
-
-    [Header("Stick To Ground Parameters")]
-    [Tooltip("taille minimum du perso au dessus du sol")]
-    [SerializeField] private float gANCSize; 
-    [Tooltip("empty")]
-    [SerializeField] private RaycastHit2D groundAlignementNC;
-
 
     [Header("Dash Parameters")]
     [Tooltip("Puissance du Dash")]
@@ -136,6 +130,7 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("vitesse de déplacement en mode durci")]
     [SerializeField] private float hardMoveSpeed;
     private float movehorizontalHardened;
+    private float apexMoveHorizontalHrdened;
     [Tooltip("puissance du saut quand le mode durci erst activé")]
     [SerializeField] private float hardJumpForce;
     [Tooltip("Couleur du perso en mode durci, surtout utile pour les tests avant implémentation des travaux des GAs")]
@@ -161,12 +156,27 @@ public class PlayerMovement : MonoBehaviour
     private RaycastHit2D screenShakeRay;
     private bool canScreenShake;
 
+    [Header("Slope Parameters")]
+    [SerializeField] private float slopeRaySize;
+    [SerializeField] private float maxSlopeAngle;
+    private float downAngle;
+    private float downAngleOld;
+    private float sideAngle;
+    private Vector2 slopeNormalPerpendicular;
+    private bool isOnSlope;
+    private bool canWalkOnSlope;
+    private bool canJump;
+    [SerializeField] private PhysicsMaterial2D noFriction;
+    [SerializeField] private PhysicsMaterial2D fullFriction;
+
     [Header("Components")]
     [Tooltip("rb utile pour les mouvements")]
     public Rigidbody2D rb;
     [Tooltip("sprite renderer utilisé pour le sens de déplacement du personnage")]
     public SpriteRenderer spriteRenderer;
+    [SerializeField] private CapsuleCollider2D CCol;
     private bool isFacingRight = true;
+    private Vector2 colliderSize;
     #endregion
 
     #region instance
@@ -185,11 +195,19 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Update
+    void Start()
+    {
+        colliderSize = CCol.size;
+    }
+
     void Update()
     {
         //Vérifications de collision au solA
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, GroundCollisionLayers);
-        groundAlignementNC = Physics2D.Raycast(transform.position, -transform.up, gANCSize, GroundCollisionLayers);
+        if (isGrounded)
+        {
+            isJumping = false;
+        }
 
         //Bool de vrification de collision pour le fly
         //hitground = Physics2D.Raycast(transform.position, directionRay, sizeRay, GroundCollisionLayers);
@@ -208,10 +226,10 @@ public class PlayerMovement : MonoBehaviour
         moveX = move.action.ReadValue<Vector2>().x;
         moveY = move.action.ReadValue<Vector2>().y;
 
-
-
         movehorizontal = moveX * moveSpeed * Time.fixedDeltaTime;
         movehorizontalHardened = moveX * hardMoveSpeed * Time.fixedDeltaTime;
+
+
 
         //vérification de la vitesse max de chute du perso
         if (rb.velocity.y >= maxVerticalSpeed)
@@ -245,7 +263,10 @@ public class PlayerMovement : MonoBehaviour
         if (!isHardened)
         {
             Moveperso(movehorizontal);
-            Jump(jumpForce);
+            if (canJump)
+            {
+                Jump(jumpForce);
+            }
             GravityPhysics(baseOriginGravityScale);
         }
 
@@ -254,7 +275,10 @@ public class PlayerMovement : MonoBehaviour
         {
             Moveperso(movehorizontalHardened);
             GravityPhysics(hardenedOriginGravityScale);
-            Jump(hardJumpForce);
+            if (canJump)
+            {
+                Jump(hardJumpForce);
+            }
             if (canScreenShake && screenShakeRay.distance < minDistanceForScreenShake && rb.velocity.y <= -20f)
             {
                 canScreenShake = false;
@@ -283,7 +307,13 @@ public class PlayerMovement : MonoBehaviour
             spriteRenderer.color = hardenedColor;
         }
 
-        //StickToGround();
+        //Gestion des Slopes
+        SlopeCheck();
+
+        if (downAngle <= maxSlopeAngle)
+        {
+            canJump = true;
+        }
 
         //Flip du sprite en fonction de la direction de déplacement
         Flip();
@@ -311,6 +341,21 @@ public class PlayerMovement : MonoBehaviour
     #region Méthodes
     void Moveperso(float _horiz)
     {
+        /*if (isGrounded && !isOnSlope && !isJumping)
+        {
+            Vector3 baseMoveVelocity = new Vector2(_horiz, 0.0f);
+            rb.velocity = Vector3.SmoothDamp(rb.velocity, baseMoveVelocity, ref velocity, SDOffset);
+        }
+        else if (isGrounded && isOnSlope && canWalkOnSlope && !isJumping)
+        {
+            Vector3 baseMoveVelocity = new Vector2(_horiz * slopeNormalPerpendicular.x * -moveX, _horiz * slopeNormalPerpendicular.y * -moveX);
+            rb.velocity = Vector3.SmoothDamp(rb.velocity, baseMoveVelocity, ref velocity, SDOffset);
+        }
+        else if (!isGrounded)
+        {
+            Vector3 baseMoveVelocity = new Vector2(_horiz, rb.velocity.y);
+            rb.velocity = Vector3.SmoothDamp(rb.velocity, baseMoveVelocity, ref velocity, SDOffset);
+        }*/
         Vector3 baseMoveVelocity = new Vector2(_horiz, rb.velocity.y);
         rb.velocity = Vector3.SmoothDamp(rb.velocity, baseMoveVelocity, ref velocity, SDOffset);
     }
@@ -375,14 +420,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    void StickToGround()
-    {
-        if (groundAlignementNC.distance < gANCSize)
-        {
-            transform.position.Set(transform.position.x, transform.position.y + (gANCSize - groundAlignementNC.distance), transform.position.z);
-        }
-    }
-
     void DashV3()
     {
         if (canDash)
@@ -443,6 +480,75 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    void SlopeCheck()
+    {
+        Vector2 checkPos = transform.position - new Vector3(0.0f, colliderSize.y / 2);
+
+        SlopeCheckVerti(checkPos);
+        SlopeCheckHoriz(checkPos);
+    }
+
+    void SlopeCheckHoriz(Vector2 checkPos)
+    {
+        RaycastHit2D slopeHitFront = Physics2D.Raycast(checkPos, transform.right, slopeRaySize, GroundCollisionLayers);
+        RaycastHit2D slopeHitBack = Physics2D.Raycast(checkPos, -transform.right, slopeRaySize, GroundCollisionLayers);
+
+        if (slopeHitFront)
+        {
+            isOnSlope = true;
+            sideAngle = Vector2.Angle(slopeHitFront.normal, Vector2.up);
+        }
+        else if (slopeHitBack)
+        {
+            isOnSlope = true;
+            sideAngle = Vector2.Angle(slopeHitBack.normal, Vector2.up);
+        }
+        else
+        {
+            sideAngle = 0.0f;
+            isOnSlope = false;
+        }
+    }
+
+    void SlopeCheckVerti(Vector2 checkPos)
+    {
+        RaycastHit2D hitVerti = Physics2D.Raycast(checkPos, Vector2.down, slopeRaySize, GroundCollisionLayers);
+
+        if (hitVerti)
+        {
+            slopeNormalPerpendicular = Vector2.Perpendicular(hitVerti.normal);
+            downAngle = Vector2.Angle(hitVerti.normal, Vector2.up);
+
+            if (downAngle != downAngleOld)
+            {
+                isOnSlope = true;
+            }
+
+            downAngleOld = downAngle;
+
+            Debug.DrawRay(hitVerti.point, slopeNormalPerpendicular, Color.red);
+            Debug.DrawRay(hitVerti.point, hitVerti.normal, Color.yellow);
+        }
+
+        if (downAngle > maxSlopeAngle || sideAngle > maxSlopeAngle)
+        {
+            canWalkOnSlope = false;
+        }
+        else
+        {
+            canWalkOnSlope = true;
+        }
+
+        if (isOnSlope && canWalkOnSlope && moveX == 0.0f)
+        {
+            rb.sharedMaterial = fullFriction;
+        }
+        else
+        {
+            rb.sharedMaterial = noFriction;
+        }
+    }
+
     void OnDrawGizmos()
     {
         //isGrounded
@@ -461,9 +567,6 @@ public class PlayerMovement : MonoBehaviour
         //isCloseToWall
         //Gizmos.color = Color.blue;
         //Gizmos.DrawWireSphere(wallCheck.position, wallCheckRadius);
-
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine(transform.position, groundAlignementNC.point);
     }
     #endregion
 

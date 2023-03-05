@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 1921062669476280000}
   - component: {fileID: 1921062669476280063}
   - component: {fileID: 1921062669476280002}
+  - component: {fileID: 2758463159481452811}
   - component: {fileID: 1921062669476280061}
   - component: {fileID: 1921062669476280001}
   - component: {fileID: 1921062669476280060}
@@ -69,7 +70,7 @@ Transform:
   - {fileID: 1921062668240756976}
   - {fileID: 1921062669660036389}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1921062669476280063
 SpriteRenderer:
@@ -136,7 +137,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.13598037}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -147,8 +148,24 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1, y: 0.72803926}
   m_EdgeRadius: 0
+--- !u!70 &2758463159481452811
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1921062669476280059}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -5.868017e-11, y: -0.000492245}
+  m_Size: {x: 1.0000002, y: 0.99904233}
+  m_Direction: 1
 --- !u!50 &1921062669476280061
 Rigidbody2D:
   serializedVersion: 4
@@ -169,7 +186,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!96 &1921062669476280001
 TrailRenderer:
   serializedVersion: 3
@@ -306,7 +323,6 @@ MonoBehaviour:
   hardenedOriginGravityScale: 6.5
   gravityScaleIncrease: 16
   gravityLimit: 8
-  gANCSize: 0
   dashPower: 35
   dashCompensation: {x: 2, y: 0.75}
   dashTime: 0.2
@@ -352,8 +368,13 @@ MonoBehaviour:
   minDistanceForScreenShake: 1
   screenShakeRaySize: 3
   screenShakeRayDirection: {x: 0, y: -1}
+  slopeRaySize: 0.5
+  maxSlopeAngle: 30
+  noFriction: {fileID: 6200000, guid: 48a6746e3edb7a7458591645c468b21c, type: 2}
+  fullFriction: {fileID: 6200000, guid: d36231f4a7d5454429b7142bab348fa0, type: 2}
   rb: {fileID: 1921062669476280061}
   spriteRenderer: {fileID: 1921062669476280063}
+  CCol: {fileID: 2758463159481452811}
 --- !u!114 &700038712153820397
 MonoBehaviour:
   m_ObjectHideFlags: 0
