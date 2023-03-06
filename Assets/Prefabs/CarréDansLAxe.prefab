@@ -42,7 +42,6 @@ GameObject:
   - component: {fileID: 1921062669476280000}
   - component: {fileID: 1921062669476280063}
   - component: {fileID: 1921062669476280002}
-  - component: {fileID: 2758463159481452811}
   - component: {fileID: 1921062669476280061}
   - component: {fileID: 1921062669476280001}
   - component: {fileID: 1921062669476280060}
@@ -150,22 +149,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 0.72803926}
   m_EdgeRadius: 0
---- !u!70 &2758463159481452811
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1921062669476280059}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: -5.868017e-11, y: -0.000492245}
-  m_Size: {x: 1.0000002, y: 0.99904233}
-  m_Direction: 1
 --- !u!50 &1921062669476280061
 Rigidbody2D:
   serializedVersion: 4
@@ -313,9 +296,11 @@ MonoBehaviour:
   move: {fileID: 3284202215928774880, guid: 38a9b618c5ff23747973a85dcc076472, type: 3}
   jump: {fileID: 2967327302281113686, guid: 38a9b618c5ff23747973a85dcc076472, type: 3}
   action: {fileID: -6565511526773613967, guid: 38a9b618c5ff23747973a85dcc076472, type: 3}
-  moveSpeed: 550
+  moveSpeed: 1000
   maxVerticalSpeed: 25
   SDOffset: 0.05
+  maxSpeed: 12.5
+  mult: 0.55
   jumpForce: 25
   coyoteTime: 0.15
   jumpBufferTime: 0.1
@@ -328,6 +313,16 @@ MonoBehaviour:
   dashTime: 0.2
   dashCooldown: 2
   trail: {fileID: 1921062669476280001}
+  grabSpeed: 2
+  powerWallJump: {x: 25, y: 35}
+  wallJumpBuffer: 0.1
+  wallJumpDuration: 0.3
+  isWallGrab: 0
+  wallCheck: {fileID: 1921062669660036389}
+  wallCheckRadius: 0.2
+  WallCollisionLayer:
+    serializedVersion: 2
+    m_Bits: 64
   groundCheck: {fileID: 1921062668240756976}
   groundCheckRadius: 0.2
   GroundCollisionLayers:
@@ -345,10 +340,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: -0.02179718
-      value: 0.15377045
-      inSlope: -0.16833077
-      outSlope: -0.16833077
+      time: -0.025405884
+      value: 0.23508072
+      inSlope: -0.25563726
+      outSlope: -0.25563726
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
@@ -356,8 +351,8 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0.8989563
       value: -0.0012207031
-      inSlope: -0.16833077
-      outSlope: -0.16833077
+      inSlope: -0.25563726
+      outSlope: -0.25563726
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -374,7 +369,7 @@ MonoBehaviour:
   fullFriction: {fileID: 6200000, guid: d36231f4a7d5454429b7142bab348fa0, type: 2}
   rb: {fileID: 1921062669476280061}
   spriteRenderer: {fileID: 1921062669476280063}
-  CCol: {fileID: 2758463159481452811}
+  CCol: {fileID: 1921062669476280002}
 --- !u!114 &700038712153820397
 MonoBehaviour:
   m_ObjectHideFlags: 0

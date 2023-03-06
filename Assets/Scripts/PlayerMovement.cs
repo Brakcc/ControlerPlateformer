@@ -1,9 +1,4 @@
 using System.Collections;
-using System.ComponentModel;
-using System.Xml.Linq;
-using TMPro.SpriteAssetUtilities;
-using TreeEditor;
-using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -20,17 +15,19 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private InputActionReference action;
     private float moveX;
     private float moveY;
+    
 
     [Header("Movement Parameters")]
     [Tooltip("Abusez pas vous comprenez qand même ce qu'est une vitesse de déplacement")]
-    public float moveSpeed;
+    [SerializeField] private float moveSpeed;
     [Tooltip("vitesse max de chute du perso pour éviter une accélération infinie et le passage à travres les hitbox")]
     [SerializeField] private float maxVerticalSpeed;
     private float movehorizontal;
-    private float apexMoveHorizontal;
     private Vector3 velocity = Vector3.zero;
     [Tooltip("Règle l'accélération du SmoothDamp (n'y touchez pas trop c'est chiant à régler :')")]
     [SerializeField] private float SDOffset;
+    [SerializeField] private float maxSpeed;
+    [SerializeField] private float mult;
 
     [Header("Jump Parameters")]
     [Tooltip("pariel sur la puissance du saut, la puissance du saut est plus basse que la vitesse de déplacement car elle utilise une échelle différente du SmoothDamp)")]
@@ -83,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
     private bool canPlane = false;
     private bool isFlying = false;*/
 
-    /*[Header("WallJump Parameters")]
+    [Header("WallJump Parameters")]
     [Tooltip("Vitesse de déscente des murs quand accroché aux murs")]
     [SerializeField] private float grabSpeed;
     [Tooltip("vitesse horizontale lorque le perso se propulse à l'aide du mur")]
@@ -111,7 +108,7 @@ public class PlayerMovement : MonoBehaviour
     //[Tooltip("léger recul quand le perso monte le mur à chaque saut, ajoute un peu de réalisme")]
     //[SerializeField] private float recoilWallJump;
     //private RaycastHit2D wallJumpLeft;
-    //private RaycastHit2D wallJumpRight;*/
+    //private RaycastHit2D wallJumpRight;
 
     [Header("Ground Check Parameters")]
     [Tooltip("Zone de détection du sol")]
@@ -130,7 +127,6 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("vitesse de déplacement en mode durci")]
     [SerializeField] private float hardMoveSpeed;
     private float movehorizontalHardened;
-    private float apexMoveHorizontalHrdened;
     [Tooltip("puissance du saut quand le mode durci erst activé")]
     [SerializeField] private float hardJumpForce;
     [Tooltip("Couleur du perso en mode durci, surtout utile pour les tests avant implémentation des travaux des GAs")]
@@ -174,7 +170,7 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody2D rb;
     [Tooltip("sprite renderer utilisé pour le sens de déplacement du personnage")]
     public SpriteRenderer spriteRenderer;
-    [SerializeField] private CapsuleCollider2D CCol;
+    [SerializeField] private BoxCollider2D CCol;
     private bool isFacingRight = true;
     private Vector2 colliderSize;
     #endregion
@@ -217,7 +213,8 @@ public class PlayerMovement : MonoBehaviour
         screenShakeRay = Physics2D.Raycast(transform.position, screenShakeRayDirection, screenShakeRaySize, GroundCollisionLayers);
 
         //Bool de vérification de collision aux murs
-        //isCloseToWall = Physics2D.OverlapCircle(wallCheck.position, wallCheckRadius, WallCollisionLayer);
+        isCloseToWall = Physics2D.OverlapCircle(wallCheck.position, wallCheckRadius, WallCollisionLayer);
+
         //Raycast de verification de collision aux murs pour le Wall Jump
         //wallJumpLeft = Physics2D.Raycast(transform.position, new Vector2(-1, 0), 2, WallCollisionLayer);
         //wallJumpRight = Physics2D.Raycast(transform.position, new Vector2(1, 0), 2, WallCollisionLayer);
@@ -226,10 +223,19 @@ public class PlayerMovement : MonoBehaviour
         moveX = move.action.ReadValue<Vector2>().x;
         moveY = move.action.ReadValue<Vector2>().y;
 
+        /*if (isGrounded)
+        {
+            movehorizontal = moveX * moveSpeed * Time.fixedDeltaTime;
+            movehorizontalHardened = moveX * hardMoveSpeed * Time.fixedDeltaTime;
+        }
+        else
+        {
+            movehorizontal = moveX * apexMoveSpeed * Time.fixedDeltaTime;
+            movehorizontalHardened = moveX * apexHardMoveSpeed * Time.fixedDeltaTime;
+        }*/
+
         movehorizontal = moveX * moveSpeed * Time.fixedDeltaTime;
         movehorizontalHardened = moveX * hardMoveSpeed * Time.fixedDeltaTime;
-
-
 
         //vérification de la vitesse max de chute du perso
         if (rb.velocity.y >= maxVerticalSpeed)
@@ -286,6 +292,10 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+        WallGrabV2();
+        WallJumpV2();
+        StopWallJumpingV2();
+
         //Appel du Dash ou action de sorti de mode durci
         if (couldDash && isGrounded)
         {
@@ -308,7 +318,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //Gestion des Slopes
-        SlopeCheck();
+        //SlopeCheck();
 
         if (downAngle <= maxSlopeAngle)
         {
@@ -356,8 +366,12 @@ public class PlayerMovement : MonoBehaviour
             Vector3 baseMoveVelocity = new Vector2(_horiz, rb.velocity.y);
             rb.velocity = Vector3.SmoothDamp(rb.velocity, baseMoveVelocity, ref velocity, SDOffset);
         }*/
-        Vector3 baseMoveVelocity = new Vector2(_horiz, rb.velocity.y);
-        rb.velocity = Vector3.SmoothDamp(rb.velocity, baseMoveVelocity, ref velocity, SDOffset);
+        //Vector3 baseMoveVelocity = new Vector2(_horiz, rb.velocity.y);
+        //rb.velocity = Vector3.SmoothDamp(rb.velocity, baseMoveVelocity, ref velocity, SDOffset);
+
+        rb.AddForce(new Vector3(_horiz * (isGrounded? 1:mult), 0, 0));
+
+        rb.velocity = new Vector3(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y, 0);
     }
 
     void Jump(float _jumpForce)
@@ -565,8 +579,8 @@ public class PlayerMovement : MonoBehaviour
         Gizmos.DrawLine(transform.position, screenShakeRay.point);
 
         //isCloseToWall
-        //Gizmos.color = Color.blue;
-        //Gizmos.DrawWireSphere(wallCheck.position, wallCheckRadius);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(wallCheck.position, wallCheckRadius);
     }
     #endregion
 
@@ -694,7 +708,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }*/
 
-    /*void WallGrabV2()
+    void WallGrabV2()
     {
         if (isCloseToWall && !isGrounded && movehorizontal != 0f)
         {
@@ -705,9 +719,9 @@ public class PlayerMovement : MonoBehaviour
         {
             isWallGrab = false;
         }
-    }*/
+    }
 
-    /*void WallJumpV2()
+    void WallJumpV2()
     {
         if (isWallGrab)
         {
@@ -733,11 +747,11 @@ public class PlayerMovement : MonoBehaviour
             }
             Invoke(nameof(StopWallJumpingV2), wallJumpDuration);
         }
-    }*/
+    }
 
-    /*void StopWallJumpingV2()
+    void StopWallJumpingV2()
     {
         isWallJump = false;
-    }*/
+    }
     #endregion
 }
