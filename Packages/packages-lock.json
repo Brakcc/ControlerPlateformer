@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.cammin.ldtkunity": {
+      "version": "3.2.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
+    },
     "com.unity.2d.animation": {
       "version": "8.0.2",
       "depth": 1,

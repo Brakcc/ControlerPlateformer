@@ -22,44 +22,44 @@ public class PlayerMovement : MonoBehaviour
     private float moveY;
 
     [Header("Movement Parameters")]
-    [Tooltip("Abusez pas vous comprenez qand même ce qu'est une vitesse de déplacement")]
+    [Tooltip("Abusez pas vous comprenez qand mï¿½me ce qu'est une vitesse de dï¿½placement")]
     public float moveSpeed;
-    [Tooltip("vitesse max de chute du perso pour éviter une accélération infinie et le passage à travres les hitbox")]
+    [Tooltip("vitesse max de chute du perso pour ï¿½viter une accï¿½lï¿½ration infinie et le passage ï¿½ travres les hitbox")]
     [SerializeField] private float maxVerticalSpeed;
     private float movehorizontal;
     private float apexMoveHorizontal;
     private Vector3 velocity = Vector3.zero;
-    [Tooltip("Règle l'accélération du SmoothDamp (n'y touchez pas trop c'est chiant à régler :')")]
+    [Tooltip("Rï¿½gle l'accï¿½lï¿½ration du SmoothDamp (n'y touchez pas trop c'est chiant ï¿½ rï¿½gler :')")]
     [SerializeField] private float SDOffset;
 
     [Header("Jump Parameters")]
-    [Tooltip("pariel sur la puissance du saut, la puissance du saut est plus basse que la vitesse de déplacement car elle utilise une échelle différente du SmoothDamp)")]
+    [Tooltip("pariel sur la puissance du saut, la puissance du saut est plus basse que la vitesse de dï¿½placement car elle utilise une ï¿½chelle diffï¿½rente du SmoothDamp)")]
     public float jumpForce;
     private bool isGrounded;
     private bool isJumping = false;
-    [Tooltip("Leger délai pour sauter après une chutte d'une plateforme")]
+    [Tooltip("Leger dï¿½lai pour sauter aprï¿½s une chutte d'une plateforme")]
     [SerializeField] private float coyoteTime;
     private float coyoteTimeCounter;
-    [Tooltip("Permet de sauter légèrement avant d'avoir touché le sol")]
+    [Tooltip("Permet de sauter lï¿½gï¿½rement avant d'avoir touchï¿½ le sol")]
     [SerializeField] private float jumpBufferTime;
     private float jumpBufferTimeCounter;
 
     [Header("Gravity Parameters")]
-    [Tooltip("écehlle de gravité de base du perso, quand il est au sol, elle augmente lorqu'il a sauté, hésitez pas à faire des tests avec et la modif au max")]
+    [Tooltip("ï¿½cehlle de gravitï¿½ de base du perso, quand il est au sol, elle augmente lorqu'il a sautï¿½, hï¿½sitez pas ï¿½ faire des tests avec et la modif au max")]
     [SerializeField] private float baseOriginGravityScale;
-    [Tooltip("échelle de gravité du perso en mode durci, plus élevée que celle du mode de base/fragile")]
+    [Tooltip("ï¿½chelle de gravitï¿½ du perso en mode durci, plus ï¿½levï¿½e que celle du mode de base/fragile")]
     [SerializeField] private float hardenedOriginGravityScale;
-    [Tooltip("règle la vitesse d'augmentation de la gravité une fois que le perso a quitté le sol, pareil hésitez pas à faire des tests avec")]
+    [Tooltip("rï¿½gle la vitesse d'augmentation de la gravitï¿½ une fois que le perso a quittï¿½ le sol, pareil hï¿½sitez pas ï¿½ faire des tests avec")]
     [SerializeField] private float gravityScaleIncrease;
-    [Tooltip("La limite max de Gravity Scale, histoire que le perso s'enfonce pas à travers la map en sautant de trop haut")]
+    [Tooltip("La limite max de Gravity Scale, histoire que le perso s'enfonce pas ï¿½ travers la map en sautant de trop haut")]
     [SerializeField] private float gravityLimit;
 
     [Header("Dash Parameters")]
     [Tooltip("Puissance du Dash")]
     [SerializeField] private float dashPower;
-    [Tooltip("règle la puissance horizontale différée de la puissance verticale du Dash, évitre de tomber comme un caillou directement après avoir fait un Dash horizontal")]
+    [Tooltip("rï¿½gle la puissance horizontale diffï¿½rï¿½e de la puissance verticale du Dash, ï¿½vitre de tomber comme un caillou directement aprï¿½s avoir fait un Dash horizontal")]
     [SerializeField] private Vector2 dashCompensation;
-    [Tooltip("Durée du Dash, il vaut mieux la laisser faible, sinon le perso ne déscent plus pendant un moment")]
+    [Tooltip("Durï¿½e du Dash, il vaut mieux la laisser faible, sinon le perso ne dï¿½scent plus pendant un moment")]
     [SerializeField] private float dashTime;
     [Tooltip("Le cooldown du Dash")]
     [SerializeField] private float dashCooldown;
@@ -73,22 +73,22 @@ public class PlayerMovement : MonoBehaviour
     /*[Header("Planer Parameters")]
     [Tooltip("PAS TOUCHE !!!")]
     [SerializeField] private Vector2 directionRay;
-    [Tooltip("Permet de régler la hauteur minimale du perso nécaissaire pour planer")]
+    [Tooltip("Permet de rï¿½gler la hauteur minimale du perso nï¿½caissaire pour planer")]
     [SerializeField] private float sizeRay;
     private RaycastHit2D hitground;
     private bool cannotFly;
     [Tooltip("La vitesse de chute du perso pendant qu'il plane")]
     [SerializeField] private float SlowFall;
-    //permet de déclancher le planage en double clic de saut
+    //permet de dï¿½clancher le planage en double clic de saut
     private bool canPlane = false;
     private bool isFlying = false;*/
 
     /*[Header("WallJump Parameters")]
-    [Tooltip("Vitesse de déscente des murs quand accroché aux murs")]
+    [Tooltip("Vitesse de dï¿½scente des murs quand accrochï¿½ aux murs")]
     [SerializeField] private float grabSpeed;
-    [Tooltip("vitesse horizontale lorque le perso se propulse à l'aide du mur")]
+    [Tooltip("vitesse horizontale lorque le perso se propulse ï¿½ l'aide du mur")]
     [SerializeField] private Vector2 powerWallJump;
-    [Tooltip("Permet de faire un Wall Jump après avoir laché le grab")]
+    [Tooltip("Permet de faire un Wall Jump aprï¿½s avoir lachï¿½ le grab")]
     [SerializeField] private float wallJumpBuffer;
     private float wallJumpBufferCounter;
     [SerializeField] private float wallJumpDuration;
@@ -96,60 +96,60 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private bool isWallGrab;
     private bool isWallJump;
     private bool isCloseToWall;
-    [Tooltip("Zone de détection du mur de droite")]
+    [Tooltip("Zone de dï¿½tection du mur de droite")]
     [SerializeField] private Transform wallCheck;
-    [Tooltip("Le rayon des zones de détection des murs")]
+    [Tooltip("Le rayon des zones de dï¿½tection des murs")]
     [SerializeField] private float wallCheckRadius;
     [Tooltip("La CollisionLayer des murs")]
     [SerializeField] private LayerMask WallCollisionLayer;
-    //[Tooltip("Touche pour se déplacer vers la gauche (uniquement utilisée pour les WallJumps")]
+    //[Tooltip("Touche pour se dï¿½placer vers la gauche (uniquement utilisï¿½e pour les WallJumps")]
     //[SerializeField] private KeyCode leftKey = KeyCode.Q;
-    //[Tooltip("Touche pour se déplacer vers la droite (uniquement utilisée pour les WallJumps")]
+    //[Tooltip("Touche pour se dï¿½placer vers la droite (uniquement utilisï¿½e pour les WallJumps")]
     //[SerializeField] private KeyCode rightKey = KeyCode.D;
-    //[Tooltip("Vitesse verticale quand collé à un mur")]
+    //[Tooltip("Vitesse verticale quand collï¿½ ï¿½ un mur")]
     //[SerializeField] private float wallJumpForce;
-    //[Tooltip("léger recul quand le perso monte le mur à chaque saut, ajoute un peu de réalisme")]
+    //[Tooltip("lï¿½ger recul quand le perso monte le mur ï¿½ chaque saut, ajoute un peu de rï¿½alisme")]
     //[SerializeField] private float recoilWallJump;
     //private RaycastHit2D wallJumpLeft;
     //private RaycastHit2D wallJumpRight;*/
 
     [Header("Ground Check Parameters")]
-    [Tooltip("Zone de détection du sol")]
+    [Tooltip("Zone de dï¿½tection du sol")]
     [SerializeField] private Transform groundCheck;
-    [Tooltip("Rayon de la zone de détection su sol")]
+    [Tooltip("Rayon de la zone de dï¿½tection su sol")]
     [SerializeField] private float groundCheckRadius;
-    [Tooltip("Cette CollisionLayer est la même que celle utilisée pour le flyCheck du planage !")]
+    [Tooltip("Cette CollisionLayer est la mï¿½me que celle utilisï¿½e pour le flyCheck du planage !")]
     [SerializeField] private LayerMask GroundCollisionLayers;
 
     [Header("Hardened mode Parameters")]
-    [Tooltip("vérification du mode durci")]
+    [Tooltip("vï¿½rification du mode durci")]
     public bool isHardened = false;
-    /*[Tooltip("durée maxiamle du mode durci")]
+    /*[Tooltip("durï¿½e maxiamle du mode durci")]
     [SerializeField] private float hardenedDuration;
     private float hardenedDCounter;*/
-    [Tooltip("vitesse de déplacement en mode durci")]
+    [Tooltip("vitesse de dï¿½placement en mode durci")]
     [SerializeField] private float hardMoveSpeed;
     private float movehorizontalHardened;
     private float apexMoveHorizontalHrdened;
-    [Tooltip("puissance du saut quand le mode durci erst activé")]
+    [Tooltip("puissance du saut quand le mode durci erst activï¿½")]
     [SerializeField] private float hardJumpForce;
-    [Tooltip("Couleur du perso en mode durci, surtout utile pour les tests avant implémentation des travaux des GAs")]
+    [Tooltip("Couleur du perso en mode durci, surtout utile pour les tests avant implï¿½mentation des travaux des GAs")]
     [SerializeField] private Color hardenedColor;
 
     [Header("Hardened Camera Parameters")]
-    [Tooltip("transform de la caméra en mode durci pour le screanshake et autre mouvements de caméra")]
+    [Tooltip("transform de la camï¿½ra en mode durci pour le screanshake et autre mouvements de camï¿½ra")]
     [SerializeField] private Transform cameraTransHardened;
-    [Tooltip("Locale scale de la caméra en idle, sur place")]
+    [Tooltip("Locale scale de la camï¿½ra en idle, sur place")]
     [SerializeField] private Vector3 notMovingCamScale;
-    [Tooltip("Locale scale de la caméra en mouvement de type sprint")]
+    [Tooltip("Locale scale de la camï¿½ra en mouvement de type sprint")]
     [SerializeField] private Vector3 sprintCamScale;
-    [Tooltip("durée du screen shake pour les retombées au sol en mode durci")]
+    [Tooltip("durï¿½e du screen shake pour les retombï¿½es au sol en mode durci")]
     [SerializeField] private float shakeDuration;
-    [Tooltip("courbe de mouvement de la caméra en screen shake")]
+    [Tooltip("courbe de mouvement de la camï¿½ra en screen shake")]
     [SerializeField] private AnimationCurve shakeCurve;
-    [Tooltip("distance au sol minimale du perso pour déclancher le screen shake")]
+    [Tooltip("distance au sol minimale du perso pour dï¿½clancher le screen shake")]
     [SerializeField] private float minDistanceForScreenShake;
-    [Tooltip("Taille du raycast pour la détéction au sol pour le screen shake")]
+    [Tooltip("Taille du raycast pour la dï¿½tï¿½ction au sol pour le screen shake")]
     [SerializeField] private float screenShakeRaySize;
     [Tooltip("PAS TOUCHE !!!")]
     [SerializeField] private Vector2 screenShakeRayDirection;
@@ -172,7 +172,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Components")]
     [Tooltip("rb utile pour les mouvements")]
     public Rigidbody2D rb;
-    [Tooltip("sprite renderer utilisé pour le sens de déplacement du personnage")]
+    [Tooltip("sprite renderer utilisï¿½ pour le sens de dï¿½placement du personnage")]
     public SpriteRenderer spriteRenderer;
     [SerializeField] private CapsuleCollider2D CCol;
     private bool isFacingRight = true;
@@ -186,7 +186,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (instance != null)
         {
-            Debug.LogWarning("Il y a plus d'une instance PlayerMovement dans la scène");
+            Debug.LogWarning("Il y a plus d'une instance PlayerMovement dans la scï¿½ne");
             return;
         }
 
@@ -202,7 +202,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        //Vérifications de collision au solA
+        //Vï¿½rifications de collision au solA
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, GroundCollisionLayers);
         if (isGrounded)
         {
@@ -213,10 +213,10 @@ public class PlayerMovement : MonoBehaviour
         //hitground = Physics2D.Raycast(transform.position, directionRay, sizeRay, GroundCollisionLayers);
         //cannotFly = hitground.collider;
 
-        //Bool de vérif de collision pour le ScreenShake, il est ultra petit
+        //Bool de vï¿½rif de collision pour le ScreenShake, il est ultra petit
         screenShakeRay = Physics2D.Raycast(transform.position, screenShakeRayDirection, screenShakeRaySize, GroundCollisionLayers);
 
-        //Bool de vérification de collision aux murs
+        //Bool de vï¿½rification de collision aux murs
         //isCloseToWall = Physics2D.OverlapCircle(wallCheck.position, wallCheckRadius, WallCollisionLayer);
         //Raycast de verification de collision aux murs pour le Wall Jump
         //wallJumpLeft = Physics2D.Raycast(transform.position, new Vector2(-1, 0), 2, WallCollisionLayer);
@@ -231,7 +231,7 @@ public class PlayerMovement : MonoBehaviour
 
 
 
-        //vérification de la vitesse max de chute du perso
+        //vï¿½rification de la vitesse max de chute du perso
         if (rb.velocity.y >= maxVerticalSpeed)
         {
             rb.velocity = new Vector2(rb.velocity.x, maxVerticalSpeed);
@@ -253,13 +253,13 @@ public class PlayerMovement : MonoBehaviour
             hardenedDCounter = -0.1f;
         }*/
 
-        //verif du screen shake avec condition de dépassement
+        //verif du screen shake avec condition de dï¿½passement
         if (screenShakeRay.distance >= minDistanceForScreenShake + 0.2f)
         {
             canScreenShake = true;
         }
 
-        //Appel des méthodes de mouvements en mode normal
+        //Appel des mï¿½thodes de mouvements en mode normal
         if (!isHardened)
         {
             Moveperso(movehorizontal);
@@ -270,7 +270,7 @@ public class PlayerMovement : MonoBehaviour
             GravityPhysics(baseOriginGravityScale);
         }
 
-        //Appel des méthodes de mouvements en mode durci
+        //Appel des mï¿½thodes de mouvements en mode durci
         if (isHardened)
         {
             Moveperso(movehorizontalHardened);
@@ -315,7 +315,7 @@ public class PlayerMovement : MonoBehaviour
             canJump = true;
         }
 
-        //Flip du sprite en fonction de la direction de déplacement
+        //Flip du sprite en fonction de la direction de dï¿½placement
         Flip();
     }
     #endregion
@@ -338,7 +338,7 @@ public class PlayerMovement : MonoBehaviour
     }
     #endregion
 
-    #region Méthodes
+    #region Mï¿½thodes
     void Moveperso(float _horiz)
     {
         /*if (isGrounded && !isOnSlope && !isJumping)
@@ -403,7 +403,7 @@ public class PlayerMovement : MonoBehaviour
             rb.gravityScale = originGS;
         }
 
-        //ancienne méthode de gestion de la gravité pour le planage
+        //ancienne mï¿½thode de gestion de la gravitï¿½ pour le planage
         /*else if (!isGrounded && isFlying)
         {
             rb.gravityScale = originGS;
