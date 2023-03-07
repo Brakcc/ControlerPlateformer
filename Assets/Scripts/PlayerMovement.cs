@@ -26,8 +26,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 velocity = Vector3.zero;
     [Tooltip("Règle l'accélération du SmoothDamp (n'y touchez pas trop c'est chiant à régler :')")]
     [SerializeField] private float SDOffset;
-    [SerializeField] private float maxSpeed;
-    [SerializeField] private float mult;
+    private bool canMove = true;
 
     [Header("Jump Parameters")]
     [Tooltip("pariel sur la puissance du saut, la puissance du saut est plus basse que la vitesse de déplacement car elle utilise une échelle différente du SmoothDamp)")]
@@ -88,9 +87,10 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("Permet de faire un Wall Jump après avoir laché le grab")]
     [SerializeField] private float wallJumpBuffer;
     private float wallJumpBufferCounter;
+    [Tooltip("temps pendant lequel le personnage ne peut pas controler le perso sur l'horizontal, pour éviter que le perso ne se colle directement au mur et puisse Wall Climb")]
     [SerializeField] private float wallJumpDuration;
     private float wallJumpDirection;
-    [SerializeField] private bool isWallGrab;
+    private bool isWallGrab;
     private bool isWallJump;
     private bool isCloseToWall;
     [Tooltip("Zone de détection du mur de droite")]
@@ -99,16 +99,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float wallCheckRadius;
     [Tooltip("La CollisionLayer des murs")]
     [SerializeField] private LayerMask WallCollisionLayer;
-    //[Tooltip("Touche pour se déplacer vers la gauche (uniquement utilisée pour les WallJumps")]
-    //[SerializeField] private KeyCode leftKey = KeyCode.Q;
-    //[Tooltip("Touche pour se déplacer vers la droite (uniquement utilisée pour les WallJumps")]
-    //[SerializeField] private KeyCode rightKey = KeyCode.D;
-    //[Tooltip("Vitesse verticale quand collé à un mur")]
-    //[SerializeField] private float wallJumpForce;
-    //[Tooltip("léger recul quand le perso monte le mur à chaque saut, ajoute un peu de réalisme")]
-    //[SerializeField] private float recoilWallJump;
-    //private RaycastHit2D wallJumpLeft;
-    //private RaycastHit2D wallJumpRight;
 
     [Header("Ground Check Parameters")]
     [Tooltip("Zone de détection du sol")]
@@ -152,7 +142,7 @@ public class PlayerMovement : MonoBehaviour
     private RaycastHit2D screenShakeRay;
     private bool canScreenShake;
 
-    [Header("Slope Parameters")]
+    /*[Header("Slope Parameters")]
     [SerializeField] private float slopeRaySize;
     [SerializeField] private float maxSlopeAngle;
     private float downAngle;
@@ -163,7 +153,7 @@ public class PlayerMovement : MonoBehaviour
     private bool canWalkOnSlope;
     private bool canJump;
     [SerializeField] private PhysicsMaterial2D noFriction;
-    [SerializeField] private PhysicsMaterial2D fullFriction;
+    [SerializeField] private PhysicsMaterial2D fullFriction;*/
 
     [Header("Components")]
     [Tooltip("rb utile pour les mouvements")]
@@ -268,23 +258,23 @@ public class PlayerMovement : MonoBehaviour
         //Appel des méthodes de mouvements en mode normal
         if (!isHardened)
         {
-            Moveperso(movehorizontal);
-            if (canJump)
+            if (canMove)
             {
-                Jump(jumpForce);
+                Moveperso(movehorizontal);
             }
+            Jump(jumpForce);
             GravityPhysics(baseOriginGravityScale);
         }
 
         //Appel des méthodes de mouvements en mode durci
         if (isHardened)
         {
-            Moveperso(movehorizontalHardened);
-            GravityPhysics(hardenedOriginGravityScale);
-            if (canJump)
+            if (canMove)
             {
-                Jump(hardJumpForce);
+                Moveperso(movehorizontalHardened);
             }
+            GravityPhysics(hardenedOriginGravityScale);
+            Jump(hardJumpForce);
             if (canScreenShake && screenShakeRay.distance < minDistanceForScreenShake && rb.velocity.y <= -20f)
             {
                 canScreenShake = false;
@@ -294,7 +284,6 @@ public class PlayerMovement : MonoBehaviour
 
         WallGrabV2();
         WallJumpV2();
-        StopWallJumpingV2();
 
         //Appel du Dash ou action de sorti de mode durci
         if (couldDash && isGrounded)
@@ -320,10 +309,10 @@ public class PlayerMovement : MonoBehaviour
         //Gestion des Slopes
         //SlopeCheck();
 
-        if (downAngle <= maxSlopeAngle)
+        /*if (downAngle <= maxSlopeAngle)
         {
             canJump = true;
-        }
+        }*/
 
         //Flip du sprite en fonction de la direction de déplacement
         Flip();
@@ -366,12 +355,11 @@ public class PlayerMovement : MonoBehaviour
             Vector3 baseMoveVelocity = new Vector2(_horiz, rb.velocity.y);
             rb.velocity = Vector3.SmoothDamp(rb.velocity, baseMoveVelocity, ref velocity, SDOffset);
         }*/
-        //Vector3 baseMoveVelocity = new Vector2(_horiz, rb.velocity.y);
-        //rb.velocity = Vector3.SmoothDamp(rb.velocity, baseMoveVelocity, ref velocity, SDOffset);
+        Vector3 baseMoveVelocity = new Vector2(_horiz, rb.velocity.y);
+        rb.velocity = Vector3.SmoothDamp(rb.velocity, baseMoveVelocity, ref velocity, SDOffset);
 
-        rb.AddForce(new Vector3(_horiz * (isGrounded? 1:mult), 0, 0));
-
-        rb.velocity = new Vector3(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y, 0);
+        //rb.AddForce(new Vector3(_horiz * (isGrounded? 1:mult), 0, 0));
+        //rb.velocity = new Vector3(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y, 0);
     }
 
     void Jump(float _jumpForce)
@@ -494,7 +482,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    void SlopeCheck()
+    /*void SlopeCheck()
     {
         Vector2 checkPos = transform.position - new Vector3(0.0f, colliderSize.y / 2);
 
@@ -561,6 +549,56 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.sharedMaterial = noFriction;
         }
+    }*/
+
+    void WallGrabV2()
+    {
+        if (isCloseToWall && !isGrounded && movehorizontal != 0f)
+        {
+            isWallGrab = true;
+            rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -grabSpeed, float.MaxValue));
+        }
+        else
+        {
+            isWallGrab = false;
+        }
+    }
+
+    void WallJumpV2()
+    {
+        if (isWallGrab)
+        {
+            isWallJump = false;
+            wallJumpDirection = -transform.localScale.x;
+            wallJumpBufferCounter = wallJumpBuffer;
+        }
+        else
+        {
+            wallJumpBufferCounter -= Time.deltaTime;
+        }
+        if (jump.action.WasPerformedThisFrame() && wallJumpBufferCounter > 0f)
+        {
+            isWallJump = true;
+            rb.velocity = new Vector2(wallJumpDirection * powerWallJump.x, powerWallJump.y);
+            wallJumpBufferCounter = 0f;
+            if (transform.localScale.x != wallJumpDirection)
+            {
+                isFacingRight = !isFacingRight;
+                Vector3 localScale = transform.localScale;
+                localScale.x *= -1f;
+                transform.localScale = localScale;
+            }
+
+            StartCoroutine(StopWallJumpingV2());
+        }
+    }
+
+    IEnumerator StopWallJumpingV2()
+    {
+        canMove = false;
+        yield return new WaitForSeconds(wallJumpDuration);
+        isWallJump = false;
+        canMove = true;
     }
 
     void OnDrawGizmos()
@@ -707,51 +745,5 @@ public class PlayerMovement : MonoBehaviour
             wallJumpBufferCounter = wallJumpBuffer;
         }
     }*/
-
-    void WallGrabV2()
-    {
-        if (isCloseToWall && !isGrounded && movehorizontal != 0f)
-        {
-            isWallGrab = true;
-            rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -grabSpeed, float.MaxValue));
-        }
-        else
-        {
-            isWallGrab = false;
-        }
-    }
-
-    void WallJumpV2()
-    {
-        if (isWallGrab)
-        {
-            isWallJump = false;
-            wallJumpDirection = -transform.localScale.x;
-            wallJumpBufferCounter = wallJumpBuffer;
-        }
-        else
-        {
-            wallJumpBufferCounter -= Time.deltaTime;
-        }
-        if(jump.action.WasPerformedThisFrame() && wallJumpBufferCounter > 0f)
-        {
-            isWallJump = true;
-            rb.velocity = new Vector2(wallJumpDirection * powerWallJump.x, powerWallJump.y);
-            wallJumpBufferCounter = 0f;
-            if (transform.localScale.x != wallJumpDirection)
-            {
-                isFacingRight = !isFacingRight;
-                Vector3 localScale = transform.localScale;
-                localScale.x *= -1f;
-                transform.localScale = localScale;
-            }
-            Invoke(nameof(StopWallJumpingV2), wallJumpDuration);
-        }
-    }
-
-    void StopWallJumpingV2()
-    {
-        isWallJump = false;
-    }
     #endregion
 }
