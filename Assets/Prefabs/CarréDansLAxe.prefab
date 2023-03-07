@@ -164,7 +164,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 5
+  m_GravityScale: 1
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -296,8 +296,8 @@ MonoBehaviour:
   move: {fileID: 3284202215928774880, guid: 38a9b618c5ff23747973a85dcc076472, type: 3}
   jump: {fileID: 2967327302281113686, guid: 38a9b618c5ff23747973a85dcc076472, type: 3}
   action: {fileID: -6565511526773613967, guid: 38a9b618c5ff23747973a85dcc076472, type: 3}
-  moveSpeed: 550
-  maxVerticalSpeed: 25
+  moveSpeed: 650
+  maxVerticalSpeed: 55
   SDOffset: 0.05
   jumpForce: 20
   coyoteTime: 0.15
@@ -307,15 +307,15 @@ MonoBehaviour:
   gravityScaleIncrease: 20
   gravityLimit: 8
   dashPower: 35
-  dashCompensation: {x: 2, y: 0.75}
-  dashTime: 0.2
+  dashCompensation: {x: 2.5, y: 0.75}
+  dashLimitation: {x: 0, y: 0.2}
+  dashTime: 0.1
   dashCooldown: 2
   trail: {fileID: 1921062669476280001}
   grabSpeed: -1
   powerWallJump: {x: 12, y: 20}
-  wallJumpBuffer: 0.1
+  wallJumpBuffer: 0.05
   wallJumpDuration: 0.2
-  isWallGrab: 0
   wallCheck: {fileID: 1921062669660036389}
   wallCheckRadius: 0.2
   WallCollisionLayer:
@@ -327,7 +327,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   isHardened: 0
-  hardMoveSpeed: 600
+  hardMoveSpeed: 800
   hardJumpForce: 20
   hardenedColor: {r: 0.509434, g: 0.26970258, b: 0.0744927, a: 1}
   cameraTransHardened: {fileID: 0}
@@ -340,17 +340,26 @@ MonoBehaviour:
     - serializedVersion: 3
       time: -0.025405884
       value: 0.23508072
-      inSlope: -0.25563726
-      outSlope: -0.25563726
+      inSlope: -0.04373777
+      outSlope: -0.04373777
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.8989563
-      value: -0.0012207031
-      inSlope: -0.25563726
-      outSlope: -0.25563726
+      time: 0.54192704
+      value: 0.21026684
+      inSlope: -0.043737758
+      outSlope: -0.043737758
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.9173279
+      value: 0.19384766
+      inSlope: -0.043737747
+      outSlope: -0.043737747
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -361,10 +370,6 @@ MonoBehaviour:
   minDistanceForScreenShake: 1
   screenShakeRaySize: 3
   screenShakeRayDirection: {x: 0, y: -1}
-  slopeRaySize: 0.5
-  maxSlopeAngle: 30
-  noFriction: {fileID: 6200000, guid: 48a6746e3edb7a7458591645c468b21c, type: 2}
-  fullFriction: {fileID: 6200000, guid: d36231f4a7d5454429b7142bab348fa0, type: 2}
   rb: {fileID: 1921062669476280061}
   spriteRenderer: {fileID: 1921062669476280063}
   CCol: {fileID: 1921062669476280002}

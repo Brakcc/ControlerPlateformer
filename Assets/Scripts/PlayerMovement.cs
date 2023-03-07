@@ -16,7 +16,6 @@ public class PlayerMovement : MonoBehaviour
     private float moveX;
     private float moveY;
     
-
     [Header("Movement Parameters")]
     [Tooltip("Abusez pas vous comprenez qand même ce qu'est une vitesse de déplacement")]
     [SerializeField] private float moveSpeed;
@@ -55,6 +54,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float dashPower;
     [Tooltip("règle la puissance horizontale différée de la puissance verticale du Dash, évitre de tomber comme un caillou directement après avoir fait un Dash horizontal")]
     [SerializeField] private Vector2 dashCompensation;
+    [Tooltip("llimite la puissance verticale du Dash pour éviter un décolage trop poussé vers le haut et limmite les courbes vers le haut lors de Dash diagonaux")]
+    [SerializeField] private Vector2 dashLimitation;
     [Tooltip("Durée du Dash, il vaut mieux la laisser faible, sinon le perso ne déscent plus pendant un moment")]
     [SerializeField] private float dashTime;
     [Tooltip("Le cooldown du Dash")]
@@ -160,6 +161,7 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody2D rb;
     [Tooltip("sprite renderer utilisé pour le sens de déplacement du personnage")]
     public SpriteRenderer spriteRenderer;
+    [Tooltip("box collider du perso")]
     [SerializeField] private BoxCollider2D CCol;
     private bool isFacingRight = true;
     private Vector2 colliderSize;
@@ -228,10 +230,7 @@ public class PlayerMovement : MonoBehaviour
         movehorizontalHardened = moveX * hardMoveSpeed * Time.fixedDeltaTime;
 
         //vérification de la vitesse max de chute du perso
-        if (rb.velocity.y >= maxVerticalSpeed)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, maxVerticalSpeed);
-        }
+        rb.velocity = new Vector3(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -maxVerticalSpeed, maxVerticalSpeed), 0f);
 
         //Changement de mode du perso
         /*if (Input.GetKey(downKey) && Input.GetButtonDown("Jump"))
@@ -280,10 +279,9 @@ public class PlayerMovement : MonoBehaviour
                 canScreenShake = false;
                 StartCoroutine(ScreenShake());
             }
+            WallGrabV2();
+            WallJumpV2();
         }
-
-        WallGrabV2();
-        WallJumpV2();
 
         //Appel du Dash ou action de sorti de mode durci
         if (couldDash && isGrounded)
@@ -316,6 +314,8 @@ public class PlayerMovement : MonoBehaviour
 
         //Flip du sprite en fonction de la direction de déplacement
         Flip();
+
+        
     }
     #endregion
 
@@ -357,9 +357,6 @@ public class PlayerMovement : MonoBehaviour
         }*/
         Vector3 baseMoveVelocity = new Vector2(_horiz, rb.velocity.y);
         rb.velocity = Vector3.SmoothDamp(rb.velocity, baseMoveVelocity, ref velocity, SDOffset);
-
-        //rb.AddForce(new Vector3(_horiz * (isGrounded? 1:mult), 0, 0));
-        //rb.velocity = new Vector3(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y, 0);
     }
 
     void Jump(float _jumpForce)
@@ -439,7 +436,7 @@ public class PlayerMovement : MonoBehaviour
 
             if (isDashing)
             {
-                rb.velocity = dashPower * dashDir.normalized * dashCompensation;
+                rb.velocity = dashPower * (dashDir.normalized * dashCompensation - dashLimitation);
                 rb.gravityScale = 0f;
                 return;
             }
@@ -488,9 +485,9 @@ public class PlayerMovement : MonoBehaviour
 
         SlopeCheckVerti(checkPos);
         SlopeCheckHoriz(checkPos);
-    }
+    }*/
 
-    void SlopeCheckHoriz(Vector2 checkPos)
+    /*void SlopeCheckHoriz(Vector2 checkPos)
     {
         RaycastHit2D slopeHitFront = Physics2D.Raycast(checkPos, transform.right, slopeRaySize, GroundCollisionLayers);
         RaycastHit2D slopeHitBack = Physics2D.Raycast(checkPos, -transform.right, slopeRaySize, GroundCollisionLayers);
@@ -510,9 +507,9 @@ public class PlayerMovement : MonoBehaviour
             sideAngle = 0.0f;
             isOnSlope = false;
         }
-    }
+    }*/
 
-    void SlopeCheckVerti(Vector2 checkPos)
+    /*void SlopeCheckVerti(Vector2 checkPos)
     {
         RaycastHit2D hitVerti = Physics2D.Raycast(checkPos, Vector2.down, slopeRaySize, GroundCollisionLayers);
 
