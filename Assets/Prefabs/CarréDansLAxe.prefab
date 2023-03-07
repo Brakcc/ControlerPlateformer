@@ -132,11 +132,11 @@ BoxCollider2D:
   m_GameObject: {fileID: 1921062669476280059}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: 48a6746e3edb7a7458591645c468b21c, type: 2}
+  m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.13598037}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -147,7 +147,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.72803926}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
 --- !u!50 &1921062669476280061
 Rigidbody2D:
@@ -296,27 +296,25 @@ MonoBehaviour:
   move: {fileID: 3284202215928774880, guid: 38a9b618c5ff23747973a85dcc076472, type: 3}
   jump: {fileID: 2967327302281113686, guid: 38a9b618c5ff23747973a85dcc076472, type: 3}
   action: {fileID: -6565511526773613967, guid: 38a9b618c5ff23747973a85dcc076472, type: 3}
-  moveSpeed: 1000
+  moveSpeed: 550
   maxVerticalSpeed: 25
   SDOffset: 0.05
-  maxSpeed: 12.5
-  mult: 0.55
-  jumpForce: 25
+  jumpForce: 20
   coyoteTime: 0.15
   jumpBufferTime: 0.1
-  baseOriginGravityScale: 5
-  hardenedOriginGravityScale: 6.5
-  gravityScaleIncrease: 16
+  baseOriginGravityScale: 1
+  hardenedOriginGravityScale: 5
+  gravityScaleIncrease: 20
   gravityLimit: 8
   dashPower: 35
   dashCompensation: {x: 2, y: 0.75}
   dashTime: 0.2
   dashCooldown: 2
   trail: {fileID: 1921062669476280001}
-  grabSpeed: 2
-  powerWallJump: {x: 25, y: 35}
+  grabSpeed: -1
+  powerWallJump: {x: 12, y: 20}
   wallJumpBuffer: 0.1
-  wallJumpDuration: 0.3
+  wallJumpDuration: 0.2
   isWallGrab: 0
   wallCheck: {fileID: 1921062669660036389}
   wallCheckRadius: 0.2
