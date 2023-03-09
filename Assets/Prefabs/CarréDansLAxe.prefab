@@ -308,7 +308,7 @@ MonoBehaviour:
   gravityLimit: 8
   dashPower: 35
   dashCompensation: {x: 2.5, y: 0.75}
-  dashLimitation: {x: 0, y: 0.2}
+  dashLimitation: {x: -0.05, y: 0.2}
   dashTime: 0.1
   dashCooldown: 2
   trail: {fileID: 1921062669476280001}
@@ -338,28 +338,19 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: -0.025405884
-      value: 0.23508072
-      inSlope: -0.04373777
-      outSlope: -0.04373777
+      time: -0.031894684
+      value: 0.18159866
+      inSlope: -0.031309135
+      outSlope: -0.031309135
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.54192704
-      value: 0.21026684
-      inSlope: -0.043737758
-      outSlope: -0.043737758
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.9173279
-      value: 0.19384766
-      inSlope: -0.043737747
-      outSlope: -0.043737747
+      time: 0.9336853
+      value: 0.15136719
+      inSlope: -0.031309135
+      outSlope: -0.031309135
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
